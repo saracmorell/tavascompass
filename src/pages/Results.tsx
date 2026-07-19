@@ -17,8 +17,8 @@ export default function Results() {
   if (!result) {
     return (
       <section className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <h1 className="font-display text-3xl font-bold">No results yet</h1>
-        <p className="mt-4 text-earth/80">
+        <h1 className="font-display text-3xl font-semibold">No results yet</h1>
+        <p className="mt-4 text-cream/75">
           Take the free assessment to see where you stand.
         </p>
         <Link to="/assessment" className="btn-gold mt-8">
@@ -54,45 +54,45 @@ export default function Results() {
 
   const bandColor =
     result.band === "Strong"
-      ? "text-green-700"
+      ? "text-green-400"
       : result.band === "Developing"
-        ? "text-gold-deep"
-        : "text-red-700";
+        ? "text-gold"
+        : "text-red-400";
 
   return (
     <section className="mx-auto max-w-2xl px-4 py-12 sm:py-16">
-      <p className="text-sm font-medium uppercase tracking-wide text-earth/60">
+      <p className="text-xs font-medium uppercase tracking-luxe text-gold">
         Your free summary
       </p>
-      <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">
+      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
         Career Resilience Snapshot
       </h1>
 
       {/* Overall */}
       <div className="card mt-8 text-center">
-        <p className="text-sm font-medium uppercase tracking-wide text-earth/60">
+        <p className="text-xs font-medium uppercase tracking-luxe text-cream/50">
           Overall resilience
         </p>
-        <p className="mt-2 font-display text-6xl font-bold">{result.overall}</p>
+        <p className="mt-2 font-display text-6xl font-bold text-gold">{result.overall}</p>
         <p className={`mt-1 text-lg font-semibold ${bandColor}`}>
           {result.band}
         </p>
-        <p className="mx-auto mt-4 max-w-md leading-relaxed text-earth/80">
+        <p className="mx-auto mt-4 max-w-md leading-relaxed text-cream/75">
           {BAND_MESSAGES[result.band]}
         </p>
       </div>
 
       {/* Dimensions */}
       <div className="card mt-6">
-        <h2 className="font-display text-xl font-bold">Your five dimensions</h2>
+        <h2 className="font-display text-xl font-semibold">Your five dimensions</h2>
         <div className="mt-5 space-y-4">
           {result.dimensions.map((d) => (
             <div key={d.dimension}>
               <div className="mb-1 flex items-center justify-between text-sm">
-                <span className="font-medium">{d.label}</span>
-                <span className="text-earth/60">{d.score}</span>
+                <span className="font-medium text-cream/85">{d.label}</span>
+                <span className="text-cream/60">{d.score}</span>
               </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-sand">
+              <div className="h-2.5 overflow-hidden rounded-full bg-night">
                 <div
                   className="h-full rounded-full bg-gold"
                   style={{ width: `${d.score}%` }}
@@ -106,22 +106,22 @@ export default function Results() {
       {/* Strengths & risks */}
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <div className="card">
-          <h3 className="font-display text-lg font-bold">Leading strengths</h3>
+          <h3 className="font-display text-lg font-semibold">Leading strengths</h3>
           <ul className="mt-3 space-y-2">
             {result.strengths.map((s) => (
-              <li key={s.dimension} className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-green-600" />
+              <li key={s.dimension} className="flex items-center gap-2 text-cream/85">
+                <span className="inline-block h-2 w-2 rounded-full bg-green-400" />
                 {s.label}
               </li>
             ))}
           </ul>
         </div>
         <div className="card">
-          <h3 className="font-display text-lg font-bold">Watch areas</h3>
+          <h3 className="font-display text-lg font-semibold">Watch areas</h3>
           <ul className="mt-3 space-y-2">
             {result.risks.map((r) => (
-              <li key={r.dimension} className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-red-600" />
+              <li key={r.dimension} className="flex items-center gap-2 text-cream/85">
+                <span className="inline-block h-2 w-2 rounded-full bg-red-400" />
                 {r.label}
               </li>
             ))}
@@ -130,18 +130,18 @@ export default function Results() {
       </div>
 
       {/* Full report waitlist */}
-      <div className="card mt-6 border-gold/40 bg-gold/5">
-        <h2 className="font-display text-xl font-bold">
+      <div className="card mt-6 !border-gold/40 bg-gold/5">
+        <h2 className="font-display text-xl font-semibold">
           Your full report is coming
         </h2>
-        <p className="mt-2 leading-relaxed text-earth/80">
+        <p className="mt-2 leading-relaxed text-cream/75">
           The comprehensive Compass Report goes far deeper: detailed analysis,
           transferable skills, career opportunities, learning priorities, and a
           personalized 30 / 90 / 365-day roadmap. Join the list and be first to
           get it — plus early-access pricing.
         </p>
         {status === "done" ? (
-          <p className="mt-4 font-semibold text-green-700">
+          <p className="mt-4 font-semibold text-green-400">
             You're on the list. Watch your inbox — clarity is on the way.
           </p>
         ) : (
@@ -152,7 +152,7 @@ export default function Results() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="flex-1 rounded-full border-2 border-earth/15 bg-white px-5 py-3 outline-none transition focus:border-gold"
+              className="flex-1 rounded-full border border-gold/20 bg-night px-5 py-3 text-cream outline-none transition placeholder:text-cream/40 focus:border-gold"
             />
             <button
               type="submit"
@@ -164,7 +164,7 @@ export default function Results() {
           </form>
         )}
         {status === "error" && (
-          <p className="mt-3 text-sm text-red-700">
+          <p className="mt-3 text-sm text-red-400">
             {WAITLIST_ENDPOINT
               ? "Something went wrong — please try again."
               : "Signup isn't connected yet (set VITE_WAITLIST_ENDPOINT)."}
@@ -175,7 +175,7 @@ export default function Results() {
       <div className="mt-8 text-center">
         <Link
           to="/assessment"
-          className="text-sm font-medium text-earth/60 underline-offset-4 transition hover:text-earth hover:underline"
+          className="text-sm font-medium text-cream/60 underline-offset-4 transition hover:text-cream hover:underline"
         >
           Retake the assessment
         </Link>
