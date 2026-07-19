@@ -1,140 +1,109 @@
-export interface Option {
-  label: string;
-  /** 0–4 score contribution */
-  value: number;
-}
+import { Link } from "react-router-dom";
 
-export type Dimension =
-  | "adaptability"
-  | "skills"
-  | "financial"
-  | "learning"
-  | "outlook";
-
-export interface Question {
-  id: string;
-  dimension: Dimension;
-  prompt: string;
-  options: Option[];
-}
-
-export const DIMENSION_LABELS: Record<Dimension, string> = {
-  adaptability: "Adaptability",
-  skills: "Transferable Skills",
-  financial: "Financial Readiness",
-  learning: "Learning Momentum",
-  outlook: "Career Outlook",
-};
-
-export const questions: Question[] = [
+const steps = [
   {
-    id: "q1",
-    dimension: "outlook",
-    prompt: "How would you describe your current career situation?",
-    options: [
-      { label: "Growing — my field feels like it's expanding", value: 4 },
-      { label: "Stable — things feel steady for now", value: 3 },
-      { label: "Uncertain — I'm not sure where my field is heading", value: 1 },
-      { label: "At risk — I can see real changes coming to my role", value: 0 },
-    ],
+    title: "Assess",
+    body: "Answer honest questions about your career, skills, finances, and habits. No fluff, no personality quiz clichés.",
   },
   {
-    id: "q2",
-    dimension: "outlook",
-    prompt: "How much of your day-to-day work involves repetitive, rules-based tasks?",
-    options: [
-      { label: "Very little — mostly judgment, creativity, or people work", value: 4 },
-      { label: "Some — a mix of routine and non-routine work", value: 2 },
-      { label: "A lot — much of my work follows set procedures", value: 1 },
-      { label: "Almost all of it", value: 0 },
-    ],
+    title: "Understand",
+    body: "See where you stand: your strengths, your risks, your transferable skills, and how exposed your role is to change.",
   },
   {
-    id: "q3",
-    dimension: "skills",
-    prompt: "If you had to change careers tomorrow, how confident are you that your skills would transfer?",
-    options: [
-      { label: "Very confident — my skills apply to many fields", value: 4 },
-      { label: "Somewhat confident — some would transfer", value: 3 },
-      { label: "Not very confident — my skills feel specialized", value: 1 },
-      { label: "I honestly don't know what would transfer", value: 0 },
-    ],
-  },
-  {
-    id: "q4",
-    dimension: "skills",
-    prompt: "Which best describes your comfort with new technology and tools at work?",
-    options: [
-      { label: "I'm usually one of the first to learn new tools", value: 4 },
-      { label: "I adapt once tools are established", value: 3 },
-      { label: "I learn only what's required", value: 1 },
-      { label: "I tend to avoid new tools when I can", value: 0 },
-    ],
-  },
-  {
-    id: "q5",
-    dimension: "learning",
-    prompt: "When did you last intentionally learn a new skill for your career?",
-    options: [
-      { label: "Within the last 3 months", value: 4 },
-      { label: "Within the last year", value: 3 },
-      { label: "1–3 years ago", value: 1 },
-      { label: "I can't remember", value: 0 },
-    ],
-  },
-  {
-    id: "q6",
-    dimension: "learning",
-    prompt: "How clear are you on which skills would be most valuable for you to learn next?",
-    options: [
-      { label: "Very clear — I know exactly what to learn", value: 4 },
-      { label: "Somewhat clear — I have a general idea", value: 2 },
-      { label: "Unclear — there's too much conflicting advice", value: 1 },
-      { label: "No idea — that's why I'm here", value: 0 },
-    ],
-  },
-  {
-    id: "q7",
-    dimension: "financial",
-    prompt: "If your income stopped today, how long could you cover your essential expenses?",
-    options: [
-      { label: "6+ months", value: 4 },
-      { label: "3–6 months", value: 3 },
-      { label: "1–3 months", value: 1 },
-      { label: "Less than 1 month", value: 0 },
-    ],
-  },
-  {
-    id: "q8",
-    dimension: "financial",
-    prompt: "How many income sources does your household currently have?",
-    options: [
-      { label: "Multiple, including some independent of my job", value: 4 },
-      { label: "Two (e.g., two earners or a side income)", value: 3 },
-      { label: "One steady source", value: 2 },
-      { label: "One, and it feels unstable", value: 0 },
-    ],
-  },
-  {
-    id: "q9",
-    dimension: "adaptability",
-    prompt: "When your industry or role changes unexpectedly, how do you usually respond?",
-    options: [
-      { label: "I adapt quickly and often find opportunity in it", value: 4 },
-      { label: "I adjust after some initial stress", value: 3 },
-      { label: "I find change draining and slow to navigate", value: 1 },
-      { label: "I tend to feel stuck or anxious about it", value: 0 },
-    ],
-  },
-  {
-    id: "q10",
-    dimension: "adaptability",
-    prompt: "How strong is your professional network outside your current employer?",
-    options: [
-      { label: "Strong — I could reach many people for opportunities", value: 4 },
-      { label: "Moderate — a handful of useful connections", value: 3 },
-      { label: "Weak — mostly limited to current coworkers", value: 1 },
-      { label: "Almost nonexistent", value: 0 },
-    ],
+    title: "Act",
+    body: "Get a practical roadmap — what to learn, what to build, and what to stop worrying about over the next 30, 90, and 365 days.",
   },
 ];
+
+const audiences = [
+  "You're wondering whether your role will look the same in five years",
+  "You're considering a career change but don't know where to start",
+  "You keep hearing \"learn new skills\" but nobody says which ones",
+  "You want a practical plan, not predictions or hype",
+];
+
+export default function Landing() {
+  return (
+    <>
+      {/* Hero */}
+      <section className="bg-earth text-cream">
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:py-28">
+          <div className="max-w-2xl">
+            <p className="mb-4 inline-block rounded-full border border-gold/40 px-4 py-1 text-sm font-medium text-gold">
+              Career resilience &amp; future planning
+            </p>
+            <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl">
+              Know where you stand.
+              <br />
+              Know what to do <span className="text-gold">next</span>.
+            </h1>
+            <p className="mt-6 text-lg leading-relaxed text-cream/80">
+              Work is changing fast. Tavas Compass gives you a clear, personal
+              picture of your career resilience — and a practical plan to
+              strengthen it. No fear. No hype. Just clarity.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link to="/assessment" className="btn-gold">
+                Take the free assessment
+              </Link>
+              <a href="#how-it-works" className="btn-outline !border-cream/30 !text-cream hover:!border-gold">
+                How it works
+              </a>
+            </div>
+            <p className="mt-4 text-sm text-cream/60">
+              Free · About 3 minutes · No account required
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Sound familiar */}
+      <section className="mx-auto max-w-5xl px-4 py-16 sm:py-20">
+        <h2 className="font-display text-3xl font-bold">Sound familiar?</h2>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+          {audiences.map((a) => (
+            <li key={a} className="card flex items-start gap-3">
+              <span className="mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-gold" />
+              <span className="leading-relaxed">{a}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* How it works */}
+      <section id="how-it-works" className="bg-sand">
+        <div className="mx-auto max-w-5xl px-4 py-16 sm:py-20">
+          <h2 className="font-display text-3xl font-bold">How it works</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            {steps.map((s, i) => (
+              <div key={s.title} className="card">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold font-display text-lg font-bold text-earth">
+                  {i + 1}
+                </div>
+                <h3 className="mt-4 font-display text-xl font-bold">{s.title}</h3>
+                <p className="mt-2 leading-relaxed text-earth/80">{s.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Philosophy */}
+      <section className="mx-auto max-w-5xl px-4 py-16 sm:py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="font-display text-3xl font-bold">
+            We're not selling a score.
+          </h2>
+          <p className="mt-4 text-lg leading-relaxed text-earth/80">
+            A number doesn't change your life. Clarity does. Every question we
+            ask and every recommendation we make exists to help you answer one
+            thing: <em>what should I do next?</em>
+          </p>
+          <Link to="/assessment" className="btn-gold mt-8">
+            Start the free assessment
+          </Link>
+        </div>
+      </section>
+    </>
+  );
+}
