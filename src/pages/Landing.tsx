@@ -31,11 +31,13 @@ export default function Landing() {
           <p className="text-xs font-medium uppercase tracking-luxe text-gold sm:text-sm">
             Navigate your future with confidence
           </p>
-          <img
-            src="/TCLogoTrans.png"
-            alt=""
-            className="mx-auto mt-8 h-28 w-28 object-contain sm:h-36 sm:w-36"
-          />
+          <span className="mx-auto mt-8 block h-28 w-28 overflow-hidden rounded-full sm:h-36 sm:w-36">
+            <img
+              src="/TCLogoTrans.png"
+              alt=""
+              className="w-[160%] max-w-none -ml-[30%] -mt-[12%]"
+            />
+          </span>
           <h1 className="mt-8 font-display text-4xl font-semibold leading-tight sm:text-6xl">
             Know where you stand.
             <br />
