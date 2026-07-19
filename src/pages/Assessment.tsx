@@ -42,13 +42,13 @@ export default function Assessment() {
     <section className="mx-auto max-w-2xl px-4 py-12 sm:py-16">
       {/* Progress */}
       <div className="mb-8">
-        <div className="mb-2 flex items-center justify-between text-sm text-earth/60">
+        <div className="mb-2 flex items-center justify-between text-sm text-cream/60">
           <span>
             Question {index + 1} of {questions.length}
           </span>
           <span>{progress}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-sand">
+        <div className="h-2 overflow-hidden rounded-full bg-espresso">
           <div
             className="h-full rounded-full bg-gold transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -56,7 +56,7 @@ export default function Assessment() {
         </div>
       </div>
 
-      <h1 className="font-display text-2xl font-bold leading-snug sm:text-3xl">
+      <h1 className="font-display text-2xl font-semibold leading-snug sm:text-3xl">
         {q.prompt}
       </h1>
 
@@ -68,10 +68,10 @@ export default function Assessment() {
               key={opt.label}
               type="button"
               onClick={() => choose(opt.value)}
-              className={`w-full rounded-xl border-2 px-5 py-4 text-left leading-snug transition ${
+              className={`w-full rounded-xl border px-5 py-4 text-left leading-snug transition ${
                 active
-                  ? "border-gold bg-gold/10 font-semibold"
-                  : "border-earth/10 bg-white hover:border-gold/50"
+                  ? "border-gold bg-gold/10 font-semibold text-cream"
+                  : "border-gold/15 bg-espresso text-cream/85 hover:border-gold/50"
               }`}
             >
               {opt.label}
@@ -85,7 +85,7 @@ export default function Assessment() {
           type="button"
           onClick={back}
           disabled={index === 0}
-          className="text-sm font-medium text-earth/60 transition hover:text-earth disabled:invisible"
+          className="text-sm font-medium text-cream/60 transition hover:text-cream disabled:invisible"
         >
           ← Back
         </button>
