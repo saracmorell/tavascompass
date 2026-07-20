@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { questions } from "@/data/questions";
+import { steps, SIGNAL_COUNT } from "@/data/signals";
 import { scoreAnswers } from "@/lib/scoring";
 import { setResult } from "@/lib/storage";
 
@@ -10,30 +10,37 @@ export default function Assessment() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [selected, setSelected] = useState<number | null>(null);
 
-  const q = questions[index];
-  const progress = Math.round((index / questions.length) * 100);
-  const isLast = index === questions.length - 1;
+  const step = steps[index];
+  const progress = Math.round((index / steps.length) * 100);
+  const isLast = index === steps.length - 1;
 
-  function choose(value: number) {
-    setSelected(value);
-  }
+  const signalsSoFar = step.kind === "profile" ? 0 : step.number ?? 0;
+  const header =
+    step.kind === "profile"
+      ? step.name
+      : `Career Signal #${step.number} — ${step.name}`;
+  const counter =
+    step.kind === "profile"
+      ? `Your profile · ${index + 1} of 2`
+      : `Signal ${signalsSoFar} of ${SIGNAL_COUNT}`;
 
   function next() {
     if (selected === null) return;
-    const updated = { ...answers, [q.id]: selected };
+    const updated = { ...answers, [step.id]: selected };
     setAnswers(updated);
-    setSelected(null);
     if (isLast) {
       setResult(scoreAnswers(updated));
       navigate("/results");
     } else {
+      const upcoming = steps[index + 1];
+      setSelected(updated[upcoming.id] ?? null);
       setIndex(index + 1);
     }
   }
 
   function back() {
     if (index === 0) return;
-    const prev = questions[index - 1];
+    const prev = steps[index - 1];
     setSelected(answers[prev.id] ?? null);
     setIndex(index - 1);
   }
@@ -43,9 +50,7 @@ export default function Assessment() {
       {/* Progress */}
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between text-sm text-cream/60">
-          <span>
-            Question {index + 1} of {questions.length}
-          </span>
+          <span>{counter}</span>
           <span>{progress}%</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-espresso">
@@ -56,18 +61,24 @@ export default function Assessment() {
         </div>
       </div>
 
-      <h1 className="font-display text-2xl font-semibold leading-snug sm:text-3xl">
-        {q.prompt}
+      <p className="text-xs font-medium uppercase tracking-luxe text-gold">
+        {header}
+      </p>
+      {step.expert && (
+        <p className="mt-1 text-xs text-cream/50">Asked by {step.expert}</p>
+      )}
+      <h1 className="mt-3 font-display text-2xl font-semibold leading-snug sm:text-3xl">
+        {step.prompt}
       </h1>
 
       <div className="mt-8 space-y-3">
-        {q.options.map((opt) => {
-          const active = selected === opt.value && selected !== null;
+        {step.options.map((opt, i) => {
+          const active = selected === i;
           return (
             <button
               key={opt.label}
               type="button"
-              onClick={() => choose(opt.value)}
+              onClick={() => setSelected(i)}
               className={`w-full rounded-xl border px-5 py-4 text-left leading-snug transition ${
                 active
                   ? "border-gold bg-gold/10 font-semibold text-cream"

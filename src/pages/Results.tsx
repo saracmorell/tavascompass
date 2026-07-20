@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getResult } from "@/lib/storage";
-import { BAND_MESSAGES } from "@/lib/scoring";
+import { BAND_MESSAGES, ALIGNMENT_NOTES, EXPOSURE_NOTES } from "@/lib/scoring";
 
 const WAITLIST_ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT as
   | string
@@ -110,6 +110,32 @@ export default function Results() {
         <p className="mx-auto mt-4 max-w-md leading-relaxed text-cream/75">
           {BAND_MESSAGES[result.band]}
         </p>
+      </div>
+
+      {/* Readings: Alignment + AI Exposure */}
+      <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <div className="card">
+          <p className="text-xs font-medium uppercase tracking-luxe text-cream/50">
+            Alignment
+          </p>
+          <p className="mt-1 font-display text-2xl font-semibold text-gold">
+            {result.alignment}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-cream/70">
+            {ALIGNMENT_NOTES[result.alignment]}
+          </p>
+        </div>
+        <div className="card">
+          <p className="text-xs font-medium uppercase tracking-luxe text-cream/50">
+            AI Exposure
+          </p>
+          <p className="mt-1 font-display text-2xl font-semibold text-gold">
+            {result.aiExposure}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-cream/70">
+            {EXPOSURE_NOTES[result.aiExposure]}
+          </p>
+        </div>
       </div>
 
       {/* Dimensions */}
