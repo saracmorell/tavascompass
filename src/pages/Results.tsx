@@ -101,7 +101,7 @@ export default function Results() {
       {/* Overall */}
       <div className="card mt-8 text-center">
         <p className="text-xs font-medium uppercase tracking-luxe text-cream/50">
-          Overall resilience
+          Compass Index
         </p>
         <p className="mt-2 font-display text-6xl font-bold text-gold">{result.overall}</p>
         <p className={`mt-1 text-lg font-semibold ${bandColor}`}>
@@ -136,7 +136,7 @@ export default function Results() {
       {/* Strengths & risks */}
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <div className="card">
-          <h3 className="font-display text-lg font-semibold">Leading strengths</h3>
+          <h3 className="font-display text-lg font-semibold">Tailwinds</h3>
           <ul className="mt-3 space-y-2">
             {result.strengths.map((s) => (
               <li key={s.dimension} className="flex items-center gap-2 text-cream/85">
@@ -147,7 +147,7 @@ export default function Results() {
           </ul>
         </div>
         <div className="card">
-          <h3 className="font-display text-lg font-semibold">Watch areas</h3>
+          <h3 className="font-display text-lg font-semibold">Headwinds</h3>
           <ul className="mt-3 space-y-2">
             {result.risks.map((r) => (
               <li key={r.dimension} className="flex items-center gap-2 text-cream/85">
@@ -165,9 +165,10 @@ export default function Results() {
           Get your full Compass Report
         </h2>
         <p className="mt-2 leading-relaxed text-cream/75">
-          The comprehensive Compass Report goes far deeper: detailed analysis,
-          transferable skills, career opportunities, learning priorities, and a
-          personalized 30 / 90 / 365-day roadmap — built from your answers.
+          The comprehensive Compass Report goes far deeper: your full Compass
+          Index analysis, AI impact, transferable skills, Your Course — a
+          personalized 30 / 90 / 365-day plan — plus what's on the horizon
+          for your field. Built from your answers.
         </p>
         <button
           onClick={buyReport}
