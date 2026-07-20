@@ -13,6 +13,8 @@ export default function Results() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">(
     "idle"
   );
+  const [buyBusy, setBuyBusy] = useState(false);
+  const [buyError, setBuyError] = useState<string | null>(null);
 
   if (!result) {
     return (
@@ -49,6 +51,34 @@ export default function Results() {
       setStatus(res.ok ? "done" : "error");
     } catch {
       setStatus("error");
+    }
+  }
+
+
+  async function buyReport() {
+    setBuyBusy(true);
+    setBuyError(null);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plan: "report",
+          email: email || undefined,
+          overall: result!.overall,
+          band: result!.band,
+        }),
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        setBuyError(data.error ?? "Something went wrong — please try again.");
+        setBuyBusy(false);
+      }
+    } catch {
+      setBuyError("Something went wrong — please try again.");
+      setBuyBusy(false);
     }
   }
 
@@ -129,16 +159,34 @@ export default function Results() {
         </div>
       </div>
 
-      {/* Full report waitlist */}
+      {/* Buy the full report */}
       <div className="card mt-6 !border-gold/40 bg-gold/5">
         <h2 className="font-display text-xl font-semibold">
-          Your full report is coming
+          Get your full Compass Report
         </h2>
         <p className="mt-2 leading-relaxed text-cream/75">
           The comprehensive Compass Report goes far deeper: detailed analysis,
           transferable skills, career opportunities, learning priorities, and a
-          personalized 30 / 90 / 365-day roadmap. Join the list and be first to
-          get it — plus early-access pricing.
+          personalized 30 / 90 / 365-day roadmap — built from your answers.
+        </p>
+        <button
+          onClick={buyReport}
+          disabled={buyBusy}
+          className="btn-gold mt-5 w-full disabled:opacity-60 sm:w-auto"
+        >
+          {buyBusy ? "Opening secure checkout…" : "Get my full report — $9"}
+        </button>
+        {buyError && <p className="mt-3 text-sm text-red-400">{buyError}</p>}
+      </div>
+
+      {/* Email list */}
+      <div className="card mt-6">
+        <h2 className="font-display text-xl font-semibold">
+          Not ready yet? Stay in the loop
+        </h2>
+        <p className="mt-2 leading-relaxed text-cream/75">
+          Join the list for career resilience insights and early-access
+          offers. No spam — just clarity.
         </p>
         {status === "done" ? (
           <p className="mt-4 font-semibold text-green-400">
