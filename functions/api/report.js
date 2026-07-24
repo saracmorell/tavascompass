@@ -20,6 +20,27 @@ const SIGNAL_MEANING = {
   s15: ["genuinely enjoys work", "mostly satisfied", "mixed feelings", "dreads Mondays"],
 };
 
+const SIGNAL_NAMES = {
+  s1: "Market Demand", s2: "Routine Exposure", s3: "AI Fluency", s4: "Findability",
+  s5: "Leadership Visibility", s6: "Provable Results", s7: "Skill Portability",
+  s8: "Change Response", s9: "Internal Standing", s10: "Professional Network",
+  s11: "Financial Runway", s12: "Freedom to Move", s13: "Learning Momentum", s14: "Three-Year Clarity",
+};
+// Fixed per-signal point values (mirror of the framework tables) for strongest/weakest ranking.
+const SIGNAL_POINTS = {
+  s1: [4,3,1,0], s2: [4,3,1,0], s3: [4,3,1,0], s4: [4,2,1,0], s5: [4,3,1,0],
+  s6: [4,3,1,0], s7: [4,3,1,0], s8: [4,3,1,0], s9: [4,3,1,0], s10: [4,3,1,0],
+  s11: [4,3,1,0], s12: [4,2,2,1,1,2], s13: [4,3,1,0], s14: [4,2,1,0],
+};
+
+const CLOSING = `## The Needle Moves
+
+Your Compass Index is not a prediction — it's a starting point.
+
+Every skill you build, every relationship you strengthen, and every deliberate decision you make can change your direction.
+
+The future isn't fixed. **Neither is your Compass.**`;
+
 const MODE_BRIEF = {
   Climb: "They are trying to move up. Write an ambitious optimization plan.",
   Defend: "They are trying to stay relevant. Write a protection-and-reposition plan.",
@@ -65,30 +86,45 @@ export async function onRequestGet(ctx) {
     });
   } catch (e) { /* degrade gracefully */ }
 
+  // Framework-owned ranking: strongest and weakest signals by fixed point values.
+  const ranked = Object.keys(SIGNAL_NAMES)
+    .filter((id) => answers[id] !== undefined && SIGNAL_POINTS[id] && SIGNAL_POINTS[id][answers[id]] !== undefined)
+    .map((id) => ({ id, name: SIGNAL_NAMES[id], pts: SIGNAL_POINTS[id][answers[id]] }))
+    .sort((a, b) => b.pts - a.pts);
+  const strongest = ranked.slice(0, 3).map((r) => r.name);
+  const weakest = ranked.slice(-3).reverse().map((r) => r.name);
+
   const signalNotes = Object.entries(SIGNAL_MEANING)
     .map(([id, opts]) => (answers[id] !== undefined && opts[answers[id]] ? "- " + id + ": " + opts[answers[id]] : null))
     .filter(Boolean)
     .join("\n");
 
   const system = "You are the report writer for Tavas Compass, a luxury career intelligence platform.\n" +
-    "Voice: sophisticated, confident, warm, direct. Never gimmicky, never clinical, never shaming.\n" +
+    "THE TAVAS COMPASS WRITING SIGNATURE - every sentence must be: calm, hopeful, intelligent, practical. Never fear-based, never sensational, never clinical, never shaming.\n" +
     "The Tavas Compass Career Intelligence Framework has already computed every score deterministically - you never invent, adjust, or second-guess numbers. You interpret and write.\n" +
     (MODE_BRIEF[core.md] || MODE_BRIEF.Defend) + "\n" +
     "Alignment rule: if Alignment is Strained or Mixed, acknowledge it early - resilience is not fulfillment - and let it shape the course. If Strong, build on it.\n" +
+    "GROUNDING RULE: describe only what their responses show. Write 'your responses suggest' or 'you told us' - never claim to know their inner life or feelings beyond what they reported.\n" +
+    "POSITIVE REINFORCEMENT: after each strength, add a short 'Why this matters:' moment that builds earned confidence (e.g. why that trait is rarer or more valuable than they think). The reader must finish energized, not just analyzed.\n" +
+    "PERSONALIZED RECOMMENDATIONS: every recommendation must name the signal that drives it (e.g. 'Because Findability was one of your lowest signals, ...'). No generic advice.\n" +
+    "ONE UNFORGETTABLE LINE: include exactly one short, quotable sentence unique to their situation, set alone as a '> ' blockquote somewhere in Where You Stand or Your Course. It must be hopeful and specific, never generic.\n" +
     'Their stated ambition ("' + (core.am || "stability") + '") must visibly shape the recommendations and their order.\n\n' +
-    "Write the complete Career Compass Report in Markdown with EXACTLY these sections, in this order:\n" +
-    "# Your Career Compass Report\n" +
-    "## Where You Stand  (2-3 paragraphs: Compass Index " + core.o + ", what it means, their Alignment and AI Exposure readings woven in)\n" +
-    "## Reading Your Compass  (Tailwinds subsection and Headwinds subsection, grounded in their dimension scores)\n" +
-    "## AI Impact Assessment  (their exposure level, which of their tasks shift, how their AI fluency changes the picture)\n" +
+    "FORMAT: Markdown. Do NOT write a title and do NOT restate the Compass Index number in your opening - the report header above your text already displays it iconically. Begin with a single italic essence line as a '> ' blockquote (one sentence capturing their situation with dignity, e.g. 'A career with real potential, ready for its next phase.'). Then these sections in order:\n" +
+    "## Where You Stand  (2-3 paragraphs weaving in Alignment and AI Exposure; do not repeat the Index number more than once)\n" +
+    "## What Is Moving Your Index  (two lists, EXACTLY as provided in the data: 'Your strongest signals:' then 'Signals holding you back:' - one line of insight after each list explaining how they add up to " + core.o + ")\n" +
+    "## Reading Your Compass  (Tailwinds subsection and Headwinds subsection from their dimension scores, each strength followed by a 'Why this matters:' moment)\n" +
+    "## AI Impact Assessment  (their exposure level, which tasks shift, how their AI fluency changes the picture)\n" +
     "## Your Transferable Skills  (3-4 concrete skill translations for their role family)\n" +
-    '## Your Course  (three subsections: "First 30 Days", "Days 31-90", "Months 4-12" - each with 3 specific actions)\n' +
+    "### \ud83d\udcc8 Your Greatest Opportunity  (followed by a 1-2 sentence '> ' callout naming the single highest-leverage move)\n" +
+    '## Your Course  (three subsections: "First 30 Days", "Days 31-90", "Months 4-12" - each with 3 specific actions tied to named signals)\n' +
+    "### \ud83c\udfaf First Action This Week  (followed by a 1-2 sentence '> ' callout: the one thing to do in the next 7 days)\n" +
     "## Learning Priorities  (3 ranked priorities with reasoning)\n" +
     "## Certifications Worth Your Time  (2-3 real, well-known certifications relevant to their field with realistic time/cost notes)\n" +
-    "## Headwinds  (2-3 honest risks with mitigation)\n" +
-    "## On the Horizon  (realistic salary/opportunity trajectory for their path - directional ranges, no guarantees)\n" +
-    "## Your Next Step  (short, motivating close in their mode's voice)\n\n" +
-    "Rules: use their actual numbers. Be specific, not generic. No disclaimers inside the body. 1100-1500 words total.";
+    "## Headwinds  (2-3 honest risks with mitigation, calm not alarming)\n" +
+    "### \u26a0\ufe0f Your Biggest Risk  (followed by a 1-2 sentence '> ' callout, framed as manageable)\n" +
+    "## On the Horizon  (realistic salary/opportunity trajectory - directional ranges, no guarantees)\n" +
+    "## Your Next Step  (brief, warm, practical close - do NOT write a grand philosophical ending; the report's fixed closing follows your text)\n\n" +
+    "Rules: use their actual numbers. Be specific, not generic. No disclaimers inside the body. 1200-1600 words total.";
 
   const user = "FRAMEWORK DATA (computed by Tavas Compass, fixed):\n" +
     "Compass Index: " + core.o + " (" + core.b + ")\n" +
@@ -98,6 +134,8 @@ export async function onRequestGet(ctx) {
     "Ambition: " + core.am + "\n" +
     "Role family: " + core.rf + " | Tenure: " + core.tn + "\n" +
     "Dimension scores (0-100): " + JSON.stringify(core.d) + "\n" +
+    "Your strongest signals (use EXACTLY these): " + strongest.join(", ") + "\n" +
+    "Signals holding you back (use EXACTLY these): " + weakest.join(", ") + "\n" +
     "Signal readings:\n" + signalNotes;
 
   const models = ["claude-sonnet-5", "claude-sonnet-4-5"];
@@ -128,6 +166,13 @@ export async function onRequestGet(ctx) {
   }
   if (!md) return json({ error: lastErr || "Report generation failed." }, 502);
 
-  await ctx.env.REPORTS.put("report:" + sid, md);
-  return json({ report: md, cached: false });
+  // Framework-owned presentation: iconic Compass Index header + fixed brand closing.
+  const essence = "";
+  const final =
+    "# Your Career Compass Report\n" +
+    "@@INDEX|" + core.o + "|" + core.b + "\n\n" +
+    md.trim() + "\n\n" + CLOSING + "\n";
+
+  await ctx.env.REPORTS.put("report:" + sid, final);
+  return json({ report: final, cached: false });
 }
