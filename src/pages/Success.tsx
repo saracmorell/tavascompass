@@ -67,6 +67,30 @@ function Md({ text }: { text: string }) {
     }
     flush();
     if (!line) continue;
+    if (line.startsWith("@@INDEX|")) {
+      const [, idx, band] = line.split("|");
+      out.push(
+        <div key={key++} className="my-8 rounded-2xl border border-gold/30 bg-gold/5 px-6 py-8 text-center">
+          <p className="text-xs font-medium uppercase tracking-luxe text-gold">
+            Compass Index™
+          </p>
+          <p className="mt-2 font-display text-7xl font-bold text-gold">{idx}</p>
+          <p className="mt-1 text-lg font-semibold text-cream">{band}</p>
+        </div>
+      );
+      continue;
+    }
+    if (line.startsWith("> ")) {
+      out.push(
+        <blockquote
+          key={key++}
+          className="my-5 rounded-r-xl border-l-2 border-gold bg-gold/5 px-5 py-4 font-display text-lg italic leading-relaxed text-cream"
+        >
+          {inline(line.slice(2).replace(/^\*|\*$/g, ""))}
+        </blockquote>
+      );
+      continue;
+    }
     if (line.startsWith("# ")) {
       out.push(
         <h1 key={key++} className="mt-2 font-display text-3xl font-semibold text-cream">
