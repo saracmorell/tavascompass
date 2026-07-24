@@ -64,9 +64,10 @@ export async function onRequestPost(ctx) {
   if (typeof body.email === "string" && body.email.includes("@")) {
     p.set("customer_email", body.email);
   }
-  // Carry assessment context so the webhook can generate the right report later.
-  if (typeof body.overall === "number") p.set("metadata[overall]", String(body.overall));
-  if (typeof body.band === "string") p.set("metadata[band]", body.band.slice(0, 40));
+  // Carry the full framework result so the report engine can write from it.
+  // m1 = computed scores (JSON) · m2 = raw answer vector (CSV). Both fixed by the framework.
+  if (body.m1 && typeof body.m1 === "string") p.set("metadata[m1]", body.m1.slice(0, 490));
+  if (body.m2 && typeof body.m2 === "string") p.set("metadata[m2]", body.m2.slice(0, 490));
   p.set("metadata[plan]", body.plan);
 
   const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
