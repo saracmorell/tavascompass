@@ -65,8 +65,23 @@ export default function Results() {
         body: JSON.stringify({
           plan: "report",
           email: email || undefined,
-          overall: result!.overall,
-          band: result!.band,
+          // m1 = computed framework scores; m2 = raw answer vector (Learning Loop format)
+          m1: JSON.stringify({
+            o: result!.overall,
+            b: result!.band,
+            al: result!.alignment,
+            ex: result!.aiExposure,
+            md: result!.mode,
+            am: result!.ambition,
+            rf: result!.roleFamily,
+            tn: result!.tenure,
+            d: Object.fromEntries(
+              result!.dimensions.map((d) => [d.label, d.score])
+            ),
+          }),
+          m2: Object.entries(result!.answers)
+            .map(([k, v]) => `${k}:${v}`)
+            .join(","),
         }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
